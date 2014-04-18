@@ -42,20 +42,38 @@ function runCount($q)
 
 //runQ("SELECT id, browser, user_ident, visit_ident, page, time, ip, referer FROM stats WHERE $timeRestriction;");
 
-// total visits
-println(runCount("SELECT count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;")." Total Visits");
+echo table(
 
-// total unique visitors
-println(runCount("SELECT count(DISTINCT(`user_ident`)) AS `count` FROM stats WHERE $timeRestriction;")." Unique Visitors");
+	// total visits
+	tr (
+		th("Total visits"),
+		td(runCount("SELECT count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;"))
+	),
 
-// total page views
-println(runCount("SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction;")." Page Views");
+	// total unique visitors
+	tr (
+		th("Unique visitors"),
+		td(runCount("SELECT count(DISTINCT(`user_ident`)) AS `count` FROM stats WHERE $timeRestriction;"))
+	),
+	
+	// total page views
+	tr (
+		th("Page views"),
+		td(runCount("SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction;"))
+	),
+	
+	// average page views
+	tr (
+		th("Average pages viewed per visit"),
+		td(runCount("SELECT count(`id`) / count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;"))
+	),
 
-// average page views
-println(runCount("SELECT count(`id`) / count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;")." Average Pages Viewed per Visit");
-
-// max page views in a visit
-println(runCount("SELECT max(`count`) AS `count` FROM (SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable;")." Max Visit");
+	// max page views in a visit
+	tr (
+		th("Max page views in a visit"),
+		td(runCount("SELECT max(`count`) AS `count` FROM (SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable;"))
+	)
+);
 
 println("");
 println("Referal Sources:");
