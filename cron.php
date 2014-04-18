@@ -88,7 +88,7 @@ $data["Views by Page"] = $datablock;
 
 
 $e = new emailer();
-$e->addTo('matt@zercat.net', 'Matthew Malkin');
+$e->addTo(MAIL_TO, MAIL_TO_NAME);
 $e->setSubject('Your stats report - '.date('Y-m-d H:i:s'));
 $e->setBody('stats.mail.html', array(
 	'bgcolor' => '#9900CC',
