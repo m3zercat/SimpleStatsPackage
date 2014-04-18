@@ -19,9 +19,14 @@ else
 }
 
 
-$lastMonth = mktime(0,0,0,$month+1,0,$year);
-$thisMonth = mktime(0,0,0,date('m')+1,0,date('Y'));
+$lastMonth = mktime(0,0,0,$month,0,$year);
+$thisMonth = mktime(0,0,0,date('m'),0,date('Y'));
 $timeRestriction = "(time <= '".date('Y-m-d H:i:s',$thisMonth)."' AND time > '".date('Y-m-d H:i:s',$lastMonth)."')";
+
+if(0<runCount("SELECT count(`timestamp`) AS `count` FROM `stats-processed-data` WHERE `timestamp` = '".date(DBDATETIMEF,$thisMonth)."';")){
+	debug("Already Done!");
+	die();
+}
 
 $currentdata = array();
 $specialtext = array();
@@ -209,4 +214,4 @@ $var1 = date('Y-m-d H:i:s',$thisMonth);
 $var2 = json_encode($currentdata);
 db_insert("REPLACE INTO `stats-processed-data` (timestamp, data) VALUES (?s, ?s)", &$var1, &$var2);
 
-println("SENT!");
+debug("SENT!");

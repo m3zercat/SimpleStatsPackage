@@ -33,3 +33,13 @@ function twodp($num)
 	return number_format($num, 2, '.', '');
 }
 
+function debug($message)
+{
+	if(!defined('DEBUG')){
+		define('DEBUG', false);
+	}elseif(DEBUG)
+	{
+		println($message);
+	}
+}
+
