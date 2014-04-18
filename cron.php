@@ -42,61 +42,60 @@ function runCount($q)
 
 //runQ("SELECT id, browser, user_ident, visit_ident, page, time, ip, referer FROM stats WHERE $timeRestriction;");
 
-echo table(
+$simpledata = array();
+$data = array();
 
-	// total visits
-	tr (
-		th("Total visits"),
-		td(runCount("SELECT count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;"))
-	),
+$simpledata['Period From'] = date('Y-m-d H:i:s',$lastMonth);
+$simpledata['Period To'] = date('Y-m-d H:i:s',$thisMonth);
 
-	// total unique visitors
-	tr (
-		th("Unique visitors"),
-		td(runCount("SELECT count(DISTINCT(`user_ident`)) AS `count` FROM stats WHERE $timeRestriction;"))
-	),
-	
-	// total page views
-	tr (
-		th("Page views"),
-		td(runCount("SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction;"))
-	),
-	
-	// average page views
-	tr (
-		th("Average pages viewed per visit"),
-		td(runCount("SELECT count(`id`) / count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;"))
-	),
+// total visits
+$simpledata["Total visits"] = runCount("SELECT count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;");
 
-	// max page views in a visit
-	tr (
-		th("Max page views in a visit"),
-		td(runCount("SELECT max(`count`) AS `count` FROM (SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable;"))
-	)
-);
+// total unique visitors
+$simpledata["Unique visitors"] = runCount("SELECT count(DISTINCT(`user_ident`)) AS `count` FROM stats WHERE $timeRestriction;");
 
-println("");
-println("Referal Sources:");
-println("----------------");
+// total page views
+$simpledata["Page views"] = runCount("SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction;");
+
+// average page views
+$simpledata["Average pages viewed per visit"] = runCount("SELECT count(`id`) / count(DISTINCT(`visit_ident`)) AS `count` FROM stats WHERE $timeRestriction;");
+
+// max page views in a visit
+$simpledata["Max page views in a visit"] = runCount("SELECT max(`count`) AS `count` FROM (SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable;");
+
+
+$datablock = array();
 
 $lines = runQ("SELECT count(`id`) AS `count`, referer FROM stats GROUP BY referer;");
 foreach($lines as $line)
 {
 	extract($line);
-	println("$referer: $count");
+	$datablock[] = array($referer => $count);
 }
 
+$data["Referal Sources:"] = $datablock;
 
-println("");
-println("Views by Page:");
-println("--------------");
+$datablock = array();
 
 $lines = runQ("SELECT count(`id`) AS `count`, page FROM stats GROUP BY page;");
 foreach($lines as $line)
 {
 	extract($line);
-	println("$page: $count");
+	$datablock[] = array($page => $count);
 }
 
+$data["Views by Page"] = $datablock;
 
+
+$e = new emailer();
+$e->addTo('matt@zercat.net', 'Matthew Malkin');
+$e->setSubject('Your stats report - '.date('Y-m-d H:i:s'));
+$e->setBody('stats.mail.html', array(
+	'bgcolor' => '#9900CC',
+	'textbgcolor' => '#ffffff',
+	'textcolor' => '#b472e8',
+	'bgtextcolor' => '#ffffff',
+	'simpledata' => $simpledata,
+	'data' => $data));
+$e->send();
 

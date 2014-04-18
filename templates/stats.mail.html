@@ -1,0 +1,26 @@
+{% extends "base.mail.html" %}
+{% block content %}
+<table>
+	{% for key,value in simpledata %}
+	<tr>
+		<th style="text-align: right; padding-right: 10px;">{{ key }}</th>
+		<td>{{ value }}</td>
+	</tr>
+	{% endfor %}
+</table>
+{% for title, datablock in data %}
+<p> &nbsp; </p>
+<p> &nbsp; </p>
+<h1 style="color: {{ textcolor }}">{{ title }}</h1>
+<table style="border: 1px solid black; border-collapse:collapse;">
+	{% for dataline in datablock %}
+	<tr>
+		{% for key, value in dataline %}
+		<th style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: left;">{{ key }}</th>
+		<td style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: right;">{{ value }}</td>
+		{% endfor %}
+	</tr>
+	{% endfor %}
+</table>
+{% endfor %}
+{% endblock %}
