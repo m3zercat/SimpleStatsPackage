@@ -10,7 +10,7 @@ Simply clone this repository (and submodules) to your server then copy the confi
 
 You will also need to add tables to your database using this sql:
 
-[code]
+```
 CREATE TABLE IF NOT EXISTS `stats` (
   `id` int(15) NOT NULL AUTO_INCREMENT,
   `browser` varchar(255) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `stats-processed-data` (
   `data` longtext NOT NULL,
   PRIMARY KEY (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-[/code]
+```
 
 Once this is done set it up to run cron.php from your crontab at least once a month to have stats emailed to you.
 Stats are calculated from month beginning to month end of the month prior to the execution. That is if you execute the program on 10th of March, you'll get data from beginning to end of Feb.
