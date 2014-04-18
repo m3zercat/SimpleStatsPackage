@@ -28,3 +28,8 @@ function td($data)
     return "<td style=\"border: 1px solid black; padding: 3px; border-collapse:collapse;\">$data</td>";
 }
 
+function twodp($num)
+{
+	return number_format($num, 2, '.', '');
+}
+

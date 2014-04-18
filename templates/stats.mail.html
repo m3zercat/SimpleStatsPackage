@@ -1,26 +1,63 @@
 {% extends "base.mail.html" %}
 {% block content %}
-<table>
-	{% for key,value in simpledata %}
-	<tr>
-		<th style="text-align: right; padding-right: 10px;">{{ key }}</th>
-		<td>{{ value }}</td>
-	</tr>
-	{% endfor %}
-</table>
-{% for title, datablock in data %}
-<p> &nbsp; </p>
-<p> &nbsp; </p>
-<h1 style="color: {{ textcolor }}">{{ title }}</h1>
+<h1 style="color: {{ textcolor }}">General Data</h1>
 <table style="border: 1px solid black; border-collapse:collapse;">
-	{% for dataline in datablock %}
+	{% for row in generaldata %}
+	{% if loop.first %}
 	<tr>
-		{% for key, value in dataline %}
-		<th style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: left;">{{ key }}</th>
-		<td style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: right;">{{ value }}</td>
+		{% for value in row %}
+		<th style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: left;">{{ value }}</th>
 		{% endfor %}
 	</tr>
+	{% else %}
+	<tr>
+		{% for value in row %}
+		{% if loop.first %}
+		<th style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: left;">{{ value }}</th>
+		{% else %}
+		<td style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: right;">{{ value | raw }}</td>
+		{% endif %}
+		{% endfor %}
+	</tr>
+	{% endif %}
 	{% endfor %}
 </table>
-{% endfor %}
+<p> &nbsp; </p>
+<h1 style="color: {{ textcolor }}">Referer Sources</h1>
+<table style="border: 1px solid black; border-collapse:collapse;">
+	{% for row in refererdata %}
+	{% if loop.first %}
+	<tr>
+		{% for value in row %}
+		<th style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: left;">{{ value }}</th>
+		{% endfor %}
+	</tr>
+	{% else %}
+	<tr>
+		{% for value in row %}
+		<td style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: right;">{{ value | raw }}</td>
+		{% endfor %}
+	</tr>
+	{% endif %}
+	{% endfor %}
+</table>
+<p> &nbsp; </p>
+<h1 style="color: {{ textcolor }}">Views By Page</h1>
+<table style="border: 1px solid black; border-collapse:collapse;">
+	{% for row in pagedata %}
+	{% if loop.first %}
+	<tr>
+		{% for value in row %}
+		<th style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: left;">{{ value }}</th>
+		{% endfor %}
+	</tr>
+	{% else %}
+	<tr>
+		{% for value in row %}
+		<td style="border: 1px solid black; border-collapse:collapse; padding: 5px; text-align: right;">{{ value | raw }}</td>
+		{% endfor %}
+	</tr>
+	{% endif %}
+	{% endfor %}
+</table>
 {% endblock %}
