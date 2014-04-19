@@ -21,7 +21,7 @@ else
 
 $lastMonth = mktime(0,0,0,$month,0,$year);
 $thisMonth = mktime(0,0,0,date('m'),0,date('Y'));
-$timeRestriction = "(time <= '".date('Y-m-d H:i:s',$thisMonth)."' AND time > '".date('Y-m-d H:i:s',$lastMonth)."')";
+$timeRestriction = "(time <= '".date(DBDATETIMEF,$thisMonth)."' AND time > '".date(DBDATETIMEF,$lastMonth)."')";
 
 if(0<runCount("SELECT count(`timestamp`) AS `count` FROM `stats-processed-data` WHERE `timestamp` = '".date(DBDATETIMEF,$thisMonth)."';")){
 	debug("Already Done!");
@@ -53,7 +53,7 @@ gData('average_page_views_per_visitor', twodp(runCount("SELECT count(`id`) / cou
 gData('max_page_views_by_a_visitor', runCount("SELECT max(`count`) AS `count` FROM (SELECT count(`id`) AS `count` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable;"), true, ' Pages');
 gData('average_duration_of_visit', twodp(runCount("SELECT avg(`duration`) AS `count` FROM (SELECT max(`time`) - min(`time`) AS `duration`, `visit_ident` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable")/60), true, ' Minutes');
 gData('longest_duration_of_visit', twodp(runCount("SELECT max(`duration`) AS `count` FROM (SELECT max(`time`) - min(`time`) AS `duration`, `visit_ident` FROM stats WHERE $timeRestriction GROUP BY `visit_ident`) AS ttable")/60), true, ' Minutes');
-gData('new_visitors', runCount("SELECT count(DISTINCT(`user_ident`)) AS `count` FROM stats WHERE $timeRestriction AND `user_ident` NOT IN (SELECT DISTINCT(`user_ident`) FROM stats WHERE time <= '".date('Y-m-d H:i:s', $lastMonth)."');"), true);
+gData('new_visitors', runCount("SELECT count(DISTINCT(`user_ident`)) AS `count` FROM stats WHERE $timeRestriction AND `user_ident` NOT IN (SELECT DISTINCT(`user_ident`) FROM stats WHERE time <= '".date(DBDATETIMEF, $lastMonth)."');"), true);
 
 $lines = runQ("SELECT count(`id`) AS `count`, referer FROM stats GROUP BY referer;");
 foreach($lines as $line)
@@ -195,7 +195,8 @@ if(array_key_exists('pagedata', $priordata) && count($priordata['pagedata'])>0)
 
 $e = new emailer();
 $e->addTo(MAIL_TO, MAIL_TO_NAME);
-$e->setSubject('Your stats report - '.date('Y-m-d H:i:s'));
+$e->addTo('matt@zercat.net', 'Matthew Malkin');
+$e->setSubject('Your stats report - '.date(DBDATETIMEF));
 $finalData = array(
 	'bgcolor' => '#9900CC',
 	'textbgcolor' => '#ffffff',
@@ -210,7 +211,7 @@ $e->send();
 
 // save data only after sending so that we know we sent it
 
-$var1 = date('Y-m-d H:i:s',$thisMonth);
+$var1 = date(DBDATETIMEF,$thisMonth);
 $var2 = json_encode($currentdata);
 db_insert("REPLACE INTO `stats-processed-data` (timestamp, data) VALUES (?s, ?s)", &$var1, &$var2);
 
