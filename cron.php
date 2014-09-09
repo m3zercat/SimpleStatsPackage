@@ -213,6 +213,7 @@ $e->send();
 
 $var1 = date(DBDATETIMEF,$thisMonth);
 $var2 = json_encode($currentdata);
-db_insert("REPLACE INTO `stats-processed-data` (timestamp, data) VALUES (?s, ?s)", &$var1, &$var2);
+//db_insert("REPLACE INTO `stats-processed-data` (timestamp, data) VALUES (?s, ?s)", &$var1, &$var2);
+db_insert("REPLACE INTO `stats-processed-data` (timestamp, data) VALUES (?s, ?s)", $var1, $var2);
 
 debug("SENT!");
